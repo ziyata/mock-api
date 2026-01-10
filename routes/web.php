@@ -1,38 +1,17 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes (Laravel baru, termasuk API)
-|--------------------------------------------------------------------------
-*/
-
 /** @var Router $router */
 $router = app('router');
-
-// ROUTE TEST TANPA CSRF
-$router->post('/api/orders-no-csrf', function (Request $request) {
-    $orderId = 'ORD-' . now()->format('YmdHis');
-    return response()->json([
-        'success' => true,
-        'order_id' => $orderId,
-        'total' => $request->input('total', 0),
-    ]);
-})->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
-
 
 Route::get('/api/orders', function() {
     return response()->json(['orders' => []]);
 });
 
-
 // ===== MOCK API UNTUK ANDROID =====
-
 Route::post('/api/orders', function (Request $request) {
     $orderId = 'ORD-' . now()->format('YmdHis');
-
     return response()->json([
         'success' => true,
         'order_id' => $orderId,
@@ -44,11 +23,10 @@ Route::post('/api/orders', function (Request $request) {
             'timestamp' => now()->format('Y-m-d H:i:s'),
         ],
     ]);
-});
+})->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
 
 Route::post('/api/create-qris', function (Request $request) {
     $orderId = $request->input('order_id', 'ORD-UNKNOWN');
-
     return response()->json([
         'success' => true,
         'order_id' => $orderId,
@@ -61,7 +39,7 @@ Route::post('/api/create-qris', function (Request $request) {
             'expires_at' => now()->addMinutes(15)->format('Y-m-d H:i:s'),
         ],
     ]);
-});
+})->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
 
 Route::get('/api/order-status/{order_id}', function ($orderId) {
     return response()->json([
